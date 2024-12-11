@@ -29,16 +29,16 @@ namespace ExcelCombiner
         {
             // Show the Open File dialog. If the user clicks OK, load the
             // file that the user chose.
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            if (uploadExcelDialog.ShowDialog() == DialogResult.OK)
             {
                 //saves the file path
-                string filePath = openFileDialog1.FileName;
+                string filePath = uploadExcelDialog.FileName;
 
                 //check if the file is an excel file
                 if (!filePath.EndsWith(".xlsx"))
                 {
-                    //shows an error to the user and return
-                    errorUpload.SetError(uploadButton, "unzulässige Dateiformat");
+                    //shows an error to the user and returns
+                    errorUpload.SetError(uploadButton, "unzulässiges Dateiformat");
                     Debug.Print("unsupported file format");
                     return;
                 }
@@ -55,29 +55,34 @@ namespace ExcelCombiner
                 wbTemplate.SaveAs(filePath);
                 Debug.Print("selected file changed");
             }
-            //Workbook wb = Workbook.
-
+            else
+            {
+                errorUpload.SetError(uploadButton, "upload fehlgeschlagen");
+            }
         }
-
-        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
-        {
-            //let the user select an file
-        }
-
         private void createSampleButton_Click(object sender, EventArgs e)
         {
-            //create 'workbook' object
-            var wbTemplate = new XLWorkbook();
-            var ws = wbTemplate.AddWorksheet();
+            //let the user select the folder to save the sample to
+            if (selectSampleFolderDialog.ShowDialog() == DialogResult.OK)
+            {
+                //save the folder path
+                string folderPath = selectSampleFolderDialog.SelectedPath;
+                Debug.Print(folderPath);
+                //create new workbook object
+                var wbTemplate = new XLWorkbook();
+                var ws = wbTemplate.AddWorksheet();
 
-            ws.Cell("A1").Value = "Konto-Nr";
-            ws.Cell("B1").Value = "Bezeichnung";
-            ws.Cell("C1").Value = "Saldo";
+                //add the header cells
+                ws.Cell("A1").Value = "Konto-Nr";
+                ws.Cell("B1").Value = "Bezeichnung";
+                ws.Cell("C1").Value = "Saldo";
 
-            //saves the data to an excel file
-            //creates a new one or overwrites an existing one
-            wbTemplate.SaveAs("C:/Users/mt/Documents/SUSA_Vorlage.xlsx");
-            Debug.Print("sample created");
+                //saves the data to an excel file
+                //creates a new one or overwrites an existing one
+                string sampleFilePath = folderPath + "\\SUSA_Vorlage.xlsx";
+                wbTemplate.SaveAs(sampleFilePath);
+                Debug.Print("sample created");
+            }
         }
     }
 }
