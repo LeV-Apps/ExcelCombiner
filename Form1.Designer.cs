@@ -28,13 +28,16 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.uploadButton = new System.Windows.Forms.Button();
             this.createSampleButton = new System.Windows.Forms.Button();
+            this.errorUpload = new System.Windows.Forms.ErrorProvider(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorUpload)).BeginInit();
             this.SuspendLayout();
             // 
             // openFileDialog1
@@ -90,6 +93,12 @@
             this.createSampleButton.UseVisualStyleBackColor = true;
             this.createSampleButton.Click += new System.EventHandler(this.createSampleButton_Click);
             // 
+            // errorUpload
+            // 
+            this.errorUpload.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
+            this.errorUpload.ContainerControl = this;
+            this.errorUpload.DataSource = this.tableLayoutPanel1.ColumnStyles;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -102,6 +111,7 @@
             this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorUpload)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -113,6 +123,7 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button uploadButton;
         private System.Windows.Forms.Button createSampleButton;
+        private System.Windows.Forms.ErrorProvider errorUpload;
     }
 }
 

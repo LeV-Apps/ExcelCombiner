@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using ClosedXML.Excel;
 using DocumentFormat.OpenXml.Spreadsheet;
-using ClosedXML.Excel;
 using System.Diagnostics;
+using System.CodeDom;
 
 //recources
 //https://stackoverflow.com/questions/10419071/using-c-sharp-to-read-write-excel-files-xls-xlsx
@@ -29,17 +29,39 @@ namespace ExcelCombiner
         {
             // Show the Open File dialog. If the user clicks OK, load the
             // file that the user chose.
-            /*if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                
-            }*/
+                //saves the file path
+                string filePath = openFileDialog1.FileName;
+
+                //check if the file is an excel file
+                if (!filePath.EndsWith(".xlsx"))
+                {
+                    //shows an error to the user and return
+                    errorUpload.SetError(uploadButton, "unzulässige Dateiformat");
+                    Debug.Print("unsupported file format");
+                    return;
+                }
+                //removes error message (if it exists)
+                errorUpload.Clear();
+
+                //create new workbook object
+                var wbTemplate = new XLWorkbook();
+                var ws = wbTemplate.AddWorksheet();
+
+                ws.Cell("B3").Value = "Hallo Welt";
+
+                //overwrite the existing file
+                wbTemplate.SaveAs(filePath);
+                Debug.Print("selected file changed");
+            }
             //Workbook wb = Workbook.
 
         }
 
         private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
-
+            //let the user select an file
         }
 
         private void createSampleButton_Click(object sender, EventArgs e)
@@ -48,17 +70,14 @@ namespace ExcelCombiner
             var wbTemplate = new XLWorkbook();
             var ws = wbTemplate.AddWorksheet();
 
-            ws.Cell("B1").Value = "{{Model.Name}}";
-            ws.Cell("B2").Value = "Children:";
-            ws.Cell("B3").Value = "{{item.ChildName}}";
+            ws.Cell("A1").Value = "Konto-Nr";
+            ws.Cell("B1").Value = "Bezeichnung";
+            ws.Cell("C1").Value = "Saldo";
 
-            ws.Cell("D2").Value = "Items in container:";
-            ws.Cell("E2").Value = "{{item.ChildName}}";
-
-            //saves the data to an existing excel file
-            wbTemplate.SaveAs("C:/Users/mt/Documents/test2.xlsx");
-            Debug.Print("Done");
-            
+            //saves the data to an excel file
+            //creates a new one or overwrites an existing one
+            wbTemplate.SaveAs("C:/Users/mt/Documents/SUSA_Vorlage.xlsx");
+            Debug.Print("sample created");
         }
     }
 }
