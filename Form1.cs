@@ -24,7 +24,9 @@ namespace ExcelCombiner
         {
             InitializeComponent();
         }
-
+        Label uploadedFileLabel = new Label();
+        string uploadedFilePath;
+        Button removeUploadedFileButton = new Button();
         private void uploadButton_Click(object sender, EventArgs e)
         {
             // Show the Open File dialog. If the user clicks OK, load the
@@ -54,6 +56,28 @@ namespace ExcelCombiner
                 //overwrite the existing file
                 wbTemplate.SaveAs(filePath);
                 Debug.Print("selected file changed");
+
+                //save the path of the selected file
+                uploadedFilePath = filePath;
+
+                //create an textfield with the name of the file
+                uploadedFileLabel.Name = "file01Label";
+                char[] seperator = "\\".ToCharArray();
+                string[] filePathSplitted = filePath.Split(seperator);
+                string FileName = filePathSplitted.Last();
+                uploadedFileLabel.Text = FileName;
+
+                //define its size and dock it in the field right of the button
+                uploadedFileLabel.Size = new Size(uploadedFileLabel.PreferredWidth,
+                                                  uploadedFileLabel.PreferredHeight);
+                uploadedFileLabel.Parent = flowLayoutPanel2;
+
+                //create an button to remove the selected file
+                removeUploadedFileButton.Name = "file01RemoveButton";
+                removeUploadedFileButton.Size = removeUploadedFileButton.PreferredSize;
+                removeUploadedFileButton.Text = "Datei entfernen";
+                removeUploadedFileButton.AutoSize = true;
+                removeUploadedFileButton.Parent = flowLayoutPanel2;
             }
             else
             {
