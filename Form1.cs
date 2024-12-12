@@ -8,9 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Spreadsheet;
 using System.Diagnostics;
 using System.CodeDom;
+using static ExcelCombiner.Form1;
 
 //recources
 //https://stackoverflow.com/questions/10419071/using-c-sharp-to-read-write-excel-files-xls-xlsx
@@ -28,6 +28,7 @@ namespace ExcelCombiner
         {
             public Label label = new Label();
             public string filePath;
+            public string fileName;
             public Button removeButton = new Button();
 
         }
@@ -45,10 +46,10 @@ namespace ExcelCombiner
             }
             // Show the Open File dialog. If the user clicks OK, load the
             // file that the user chose.
-            if (uploadExcelDialog.ShowDialog() == DialogResult.OK)
+            if (uploadFileDialog.ShowDialog() == DialogResult.OK)
             {
                 //saves the file path
-                string filePath = uploadExcelDialog.FileName;
+                string filePath = uploadFileDialog.FileName;
 
                 //check if the file is an excel file
                 if (!filePath.EndsWith(".xlsx"))
@@ -62,14 +63,14 @@ namespace ExcelCombiner
                 errorUpload.Clear();
 
                 //create new workbook object
-                var wbTemplate = new XLWorkbook();
-                var ws = wbTemplate.AddWorksheet();
+                //var wbTemplate = new XLWorkbook();
+                //var ws = wbTemplate.AddWorksheet();
 
-                ws.Cell("B3").Value = "Hallo Welt";
+                //ws.Cell("B3").Value = "Hallo Welt";
 
                 //overwrite the existing file
-                wbTemplate.SaveAs(filePath);
-                Debug.Print("selected file changed");
+                //wbTemplate.SaveAs(filePath);
+                //Debug.Print("selected file changed");
 
                 //creates a new uploaded file element
                 UploadedFile uploadedFile = new UploadedFile();
@@ -83,6 +84,7 @@ namespace ExcelCombiner
                 string[] filePathSplitted = filePath.Split(seperator);
                 string FileName = filePathSplitted.Last();
                 uploadedFile.label.Text = FileName;
+                uploadedFile.fileName = FileName;
 
                 //define its size and dock it in the field right of the button
                 uploadedFile.label.Size = new Size(uploadedFile.label.PreferredWidth,
@@ -118,10 +120,10 @@ namespace ExcelCombiner
         private void createSampleButton_Click(object sender, EventArgs e)
         {
             //let the user select the folder to save the sample to
-            if (selectSampleFolderDialog.ShowDialog() == DialogResult.OK)
+            if (selectFolderDialog.ShowDialog() == DialogResult.OK)
             {
                 //save the folder path
-                string folderPath = selectSampleFolderDialog.SelectedPath;
+                string folderPath = selectFolderDialog.SelectedPath;
                 Debug.Print(folderPath);
                 //create new workbook object
                 var wbTemplate = new XLWorkbook();
@@ -137,6 +139,44 @@ namespace ExcelCombiner
                 string sampleFilePath = folderPath + "\\SUSA_Vorlage.xlsx";
                 wbTemplate.SaveAs(sampleFilePath);
                 Debug.Print("sample created");
+            }
+        }
+
+        private void startButton_Click(object sender, EventArgs e)
+        {
+            //starts combining the files
+
+            //create an workbook for the new file
+            var combined_wb = new XLWorkbook();
+            var comb_ws = combined_wb.AddWorksheet();
+
+            foreach (var uploadedFile in uploadedFiles)
+            {
+                //gets the first worksheet and add it to the combined worksheet
+                var wb = new XLWorkbook(uploadedFile.filePath);
+                var ws = wb.Worksheet(0);
+                ws.CopyTo(combined_wb);
+            }
+            combined_wb.SaveAs("C:\\Users\\mt\\Documents\\Komb_SUSA.xlsx");
+        }
+
+        private void downloadButton_Click(object sender, EventArgs e)
+        {
+            //let the user select the folder to save the file to
+            if (selectFolderDialog.ShowDialog() == DialogResult.OK)
+            {
+                //save the folder path
+                string folderPath = selectFolderDialog.SelectedPath;
+                Debug.Print(folderPath);
+
+                foreach (var uploadedFile in uploadedFiles)
+                {
+                    //select uploaded file and save it in the selected folder
+                    //if an file by the name already exists, it will be overwritten
+                    var wb = new XLWorkbook(uploadedFile.filePath);
+                    string newFilePath = folderPath + "\\" + uploadedFile.fileName;
+                    wb.SaveAs(newFilePath);
+                }
             }
         }
     }
