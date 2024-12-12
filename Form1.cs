@@ -24,11 +24,25 @@ namespace ExcelCombiner
         {
             InitializeComponent();
         }
-        Label uploadedFileLabel = new Label();
-        string uploadedFilePath;
-        Button removeUploadedFileButton = new Button();
+        public class UploadedFile
+        {
+            public Label label = new Label();
+            public string filePath;
+            public Button removeButton = new Button();
+
+        }
+        int maxFileCount = 4;
+        List<UploadedFile> uploadedFiles = new List<UploadedFile>();
+        //Label uploadedFileLabel = new Label();
+        //string uploadedFilePath;
+        //Button removeUploadedFileButton = new Button();
         private void uploadButton_Click(object sender, EventArgs e)
         {
+            if (uploadedFiles.Count >= maxFileCount)
+            {
+                errorUpload.SetError(uploadButton, "maximale Anzahl an Dateien erreicht");
+                return;
+            }
             // Show the Open File dialog. If the user clicks OK, load the
             // file that the user chose.
             if (uploadExcelDialog.ShowDialog() == DialogResult.OK)
@@ -57,46 +71,42 @@ namespace ExcelCombiner
                 wbTemplate.SaveAs(filePath);
                 Debug.Print("selected file changed");
 
-                //save the path of the selected file
-                uploadedFilePath = filePath;
+                //creates a new uploaded file element
+                UploadedFile uploadedFile = new UploadedFile();
 
-                //delete previoud textfield if existant
-                uploadedFileLabel.Dispose();
-                uploadedFileLabel = new Label();
+                //save the path of the selected file
+                uploadedFile.filePath = filePath;
 
                 //create an textfield with the name of the file
-                uploadedFileLabel.Name = "file01Label";
+                uploadedFile.label.Name = "file01Label";
                 char[] seperator = "\\".ToCharArray();
                 string[] filePathSplitted = filePath.Split(seperator);
                 string FileName = filePathSplitted.Last();
-                uploadedFileLabel.Text = FileName;
+                uploadedFile.label.Text = FileName;
 
                 //define its size and dock it in the field right of the button
-                uploadedFileLabel.Size = new Size(uploadedFileLabel.PreferredWidth,
-                                                  uploadedFileLabel.PreferredHeight);
-                uploadedFileLabel.Parent = flowLayoutPanel2;
-
-                //deletes previous remove button if existant
-                removeUploadedFileButton.Dispose();
-                removeUploadedFileButton = new Button();
+                uploadedFile.label.Size = new Size(uploadedFile.label.PreferredWidth,
+                                                  uploadedFile.label.PreferredHeight);
+                uploadedFile.label.Parent = flowLayoutPanel2;
 
                 //create an button to remove the selected file
-                removeUploadedFileButton.Name = "file01RemoveButton";
-                removeUploadedFileButton.Size = removeUploadedFileButton.PreferredSize;
-                removeUploadedFileButton.Text = "Datei entfernen";
-                removeUploadedFileButton.AutoSize = true;
-                removeUploadedFileButton.Parent = flowLayoutPanel2;
+                uploadedFile.removeButton.Name = "fileRemoveButton";
+                uploadedFile.removeButton.Size = uploadedFile.removeButton.PreferredSize;
+                uploadedFile.removeButton.Text = "Datei entfernen";
+                uploadedFile.removeButton.AutoSize = true;
+                uploadedFile.removeButton.Parent = flowLayoutPanel2;
 
                 //Adds an listener to the button which is called when the button is pressed
-                removeUploadedFileButton.Click += new EventHandler(delegate (Object o, EventArgs a)
+                uploadedFile.removeButton.Click += new EventHandler(delegate (Object o, EventArgs a)
                 {
-                    //remove the uploaded file aswell as this button
-                    uploadedFileLabel.Dispose();
-                    uploadedFileLabel = new Label();
-                    removeUploadedFileButton.Dispose();
-                    removeUploadedFileButton = new Button();
-                    Debug.Print("remove uploaded file");
+                    //remove the uploaded file
+                    uploadedFile.label.Dispose();
+                    uploadedFile.removeButton.Dispose();
+                    uploadedFiles.Remove(uploadedFile);
+                    //removes error message (if it exists)
+                    errorUpload.Clear();
                 });
+                uploadedFiles.Add(uploadedFile);
 
             }
             else
