@@ -60,6 +60,10 @@ namespace ExcelCombiner
                 //save the path of the selected file
                 uploadedFilePath = filePath;
 
+                //delete previoud textfield if existant
+                uploadedFileLabel.Dispose();
+                uploadedFileLabel = new Label();
+
                 //create an textfield with the name of the file
                 uploadedFileLabel.Name = "file01Label";
                 char[] seperator = "\\".ToCharArray();
@@ -71,6 +75,10 @@ namespace ExcelCombiner
                 uploadedFileLabel.Size = new Size(uploadedFileLabel.PreferredWidth,
                                                   uploadedFileLabel.PreferredHeight);
                 uploadedFileLabel.Parent = flowLayoutPanel2;
+
+                //deletes previous remove button if existant
+                removeUploadedFileButton.Dispose();
+                removeUploadedFileButton = new Button();
 
                 //create an button to remove the selected file
                 removeUploadedFileButton.Name = "file01RemoveButton";
@@ -87,7 +95,9 @@ namespace ExcelCombiner
                 {
                     //remove the uploaded file aswell as this button
                     uploadedFileLabel.Dispose();
+                    uploadedFileLabel = new Label();
                     removeUploadedFileButton.Dispose();
+                    removeUploadedFileButton = new Button();
                     Debug.Print("remove uploaded file");
                 });
 
@@ -97,6 +107,7 @@ namespace ExcelCombiner
                 errorUpload.SetError(uploadButton, "upload fehlgeschlagen");
             }
         }
+
         private void createSampleButton_Click(object sender, EventArgs e)
         {
             //let the user select the folder to save the sample to
