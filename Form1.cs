@@ -88,9 +88,6 @@ namespace ExcelCombiner
                 removeUploadedFileButton.Parent = flowLayoutPanel2;
 
                 //Adds an listener to the button which is called when the button is pressed
-                //ERROR is called multiple times if the uploaded file is changed,
-                //unsub ?
-
                 removeUploadedFileButton.Click += new EventHandler(delegate (Object o, EventArgs a)
                 {
                     //remove the uploaded file aswell as this button
