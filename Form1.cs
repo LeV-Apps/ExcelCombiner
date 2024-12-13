@@ -145,6 +145,7 @@ namespace ExcelCombiner
         private void startButton_Click(object sender, EventArgs e)
         {
             //starts combining the files
+            //doesnt work at the moment, it only creates an new empty file
 
             //create an workbook for the new file
             var combined_wb = new XLWorkbook();
