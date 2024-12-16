@@ -151,94 +151,128 @@ namespace ExcelCombiner
 
         private void createSampleButton_Click(object sender, EventArgs e)
         {
-            //let the user select the folder to save the sample to
-            if (selectFolderDialog.ShowDialog() == DialogResult.OK)
+            try
             {
-                //save the folder path
-                string folderPath = selectFolderDialog.SelectedPath;
-                Debug.Print(folderPath);
-                //create new workbook object
-                var wbTemplate = new XLWorkbook();
-                var ws = wbTemplate.AddWorksheet();
+                //let the user select the folder to save the sample to
+                if (selectFolderDialog.ShowDialog() == DialogResult.OK)
+                {
+                    //save the folder path
+                    string folderPath = selectFolderDialog.SelectedPath;
+                    Debug.Print(folderPath);
+                    //create new workbook object
+                    var wbTemplate = new XLWorkbook();
+                    var ws = wbTemplate.AddWorksheet();
 
-                //add the header cells
-                ws.Cell("A1").Value = "Konto-Nr";
-                ws.Cell("B1").Value = "Bezeichnung";
-                ws.Cell("C1").Value = "Saldo";
+                    //add the header cells
+                    ws.Cell("A1").Value = "Konto-Nr";
+                    ws.Cell("B1").Value = "Bezeichnung";
+                    ws.Cell("C1").Value = "Saldo";
 
-                //saves the data to an excel file
-                //creates a new one or overwrites an existing one
-                string sampleFilePath = folderPath + "\\SUSA_Vorlage.xlsx";
-                wbTemplate.SaveAs(sampleFilePath);
-                outputConsole.Text = "Vorlagen Datei wurde erfolgreich unter " +
-                    sampleFilePath + " erstellt";
-                Debug.Print("sample created");
+                    //saves the data to an excel file
+                    //creates a new one or overwrites an existing one
+                    string sampleFilePath = folderPath + "\\SUSA_Vorlage.xlsx";
+                    wbTemplate.SaveAs(sampleFilePath);
+                    outputConsole.Text = "Vorlagen Datei wurde erfolgreich unter " +
+                        sampleFilePath + " erstellt";
+                    Debug.Print("sample created");
+                }
+            }
+            catch (Exception error)
+            {
+                Debug.Print(error.Message);
+                Debug.Print(error.StackTrace);
+
+                string errorMessage = error.Message + " " + error.StackTrace;
+                errorUpload.SetError(uploadButton, "unbekannter Fehler bei der Vorlagenerstellung: " + errorMessage);
+                outputConsole.Text = "Beim der Erstellung der Vorlage ist ein unbekannter Fehler aufgetreten, " +
+                    "Error Nachricht: " + error.Message + " Error ursprung:" +
+                    " " + error.StackTrace;
             }
         }
 
         private void startButton_Click(object sender, EventArgs e)
         {
-            //starts combining the files
-            //doesnt work at the moment, it only creates an new empty file
-
-            //create an workbook for the new file
-            //IXLWorksheet comb_ws = combined_wb.AddWorksheet("zusammengefügt",0);
-            IXLWorksheet comb_ws;
-            if (combined_wb.Worksheets.Count() == 0)
+            try
             {
-                comb_ws = combined_wb.AddWorksheet();
-            } else
-            {
-                comb_ws = combined_wb.Worksheet(1);
-            }
-            int rowIndex = 1;
-
-            foreach (var uploadedFile in uploadedFiles)
-            {
-                //gets the first worksheet and add it to the combined worksheet
-                var worksheet = uploadedFile.workbook.Worksheet(1);
-                var firstRow = worksheet.FirstRowUsed();
-                var lastRow = worksheet.LastRowUsed();
-                var currentRow = firstRow;
-      
-                while (true)
+                //starts combining the files
+                IXLWorksheet comb_ws;
+                if (combined_wb.Worksheets.Count() == 0)
                 {
-                    var combRow = comb_ws.Row(rowIndex);
-                    combRow.Cell("A").Value = currentRow.Cell("A").Value;
-                    combRow.Cell("B").Value = currentRow.Cell("B").Value;
-                    combRow.Cell("C").Value = currentRow.Cell("C").Value;
+                    comb_ws = combined_wb.AddWorksheet();
+                }
+                else
+                {
+                    comb_ws = combined_wb.Worksheet(1);
+                }
+                int rowIndex = 1;
 
-                    rowIndex++;
+                foreach (var uploadedFile in uploadedFiles)
+                {
+                    //gets the first worksheet and add it to the combined worksheet
+                    var worksheet = uploadedFile.workbook.Worksheet(1);
+                    var firstRow = worksheet.FirstRowUsed();
+                    var lastRow = worksheet.LastRowUsed();
+                    var currentRow = firstRow;
 
-                    if (currentRow == lastRow)
+                    while (true)
                     {
-                        break;
+                        var combRow = comb_ws.Row(rowIndex);
+                        combRow.Cell("A").Value = currentRow.Cell("A").Value;
+                        combRow.Cell("B").Value = currentRow.Cell("B").Value;
+                        combRow.Cell("C").Value = currentRow.Cell("C").Value;
+
+                        rowIndex++;
+
+                        if (currentRow == lastRow)
+                        {
+                            break;
+                        }
+
+                        currentRow = currentRow.RowBelow();
                     }
 
-                    currentRow = currentRow.RowBelow();
                 }
-
+                outputConsole.Text = "Dateien wurden erfolgreich zusammengefügt, können jetzt gedownloaded werden";
             }
-            combined_wb.SaveAs("C:\\Users\\mt\\Documents\\Komb_SUSA.xlsx");
+            catch (Exception error)
+            {
+                Debug.Print(error.Message);
+                Debug.Print(error.StackTrace);
+
+                string errorMessage = error.Message + " " + error.StackTrace;
+                errorUpload.SetError(uploadButton, "unbekannter Fehler beim Zusammenfügen: " + errorMessage);
+                outputConsole.Text = "Beim Zusammenfügen ist ein unbekannter Fehler aufgetreten, " +
+                    "Error Nachricht: " + error.Message + " Error ursprung:" +
+                    " " + error.StackTrace;
+            }
         }
 
         private void downloadButton_Click(object sender, EventArgs e)
         {
-            //let the user select the folder to save the file to
-            if (selectFolderDialog.ShowDialog() == DialogResult.OK)
+            try
             {
-                //save the folder path
-                string folderPath = selectFolderDialog.SelectedPath;
-                Debug.Print(folderPath);
-
-                foreach (var uploadedFile in uploadedFiles)
+                //let the user select the folder to save the file to
+                if (selectFolderDialog.ShowDialog() == DialogResult.OK)
                 {
-                    //select uploaded file and save it in the selected folder
-                    //if an file by the name already exists, it will be overwritten
-                    var wb = new XLWorkbook(uploadedFile.filePath);
-                    string newFilePath = folderPath + "\\" + uploadedFile.fileName;
-                    wb.SaveAs(newFilePath);
+                    //save the folder path
+                    string folderPath = selectFolderDialog.SelectedPath;
+                    Debug.Print(folderPath);
+
+                    string newFilePath = folderPath + "\\" + "kombinierteSUSA.xlsx";
+                    combined_wb.SaveAs(newFilePath);
+                    outputConsole.Text = "Datei wurden erfolgreich gedownloaded, Speicherort : " + folderPath;
                 }
+            }
+            catch (Exception error)
+            {
+                Debug.Print(error.Message);
+                Debug.Print(error.StackTrace);
+
+                string errorMessage = error.Message + " " + error.StackTrace;
+                errorUpload.SetError(uploadButton, "unbekannter Fehler beim download: " + errorMessage);
+                outputConsole.Text = "Beim download ist ein unbekannter Fehler aufgetreten, " +
+                    "Error Nachricht: " + error.Message + " Error ursprung:" +
+                    " " + error.StackTrace;
             }
         }
     }

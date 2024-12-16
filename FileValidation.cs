@@ -63,7 +63,6 @@ namespace ExcelCombiner
         private static bool CheckFirstCell(IXLRow row)
         {
             var firstCell = row.Cell("A");
-            Debug.Print("first cell: " + firstCell.Value.ToString());
             if (firstCell.DataType == XLDataType.Number)
             {
                 //everything is ok, now check the second cell.
@@ -84,7 +83,6 @@ namespace ExcelCombiner
         {
             //the second cell is the balance description -> string
             var secondCell = row.Cell("B");
-            Debug.Print("second cell: " + secondCell.Value.ToString());
             if (secondCell.DataType == XLDataType.Text)
             {
                 //second cell also has the desired format, check last cell
@@ -96,7 +94,6 @@ namespace ExcelCombiner
         {
             //last cell contails the value as an currency, must be an float/int
             var thirdCell = row.Cell("C");
-            Debug.Print("third cell: " + thirdCell.Value.ToString());
             if (thirdCell.DataType == XLDataType.Number)
             {
                 //all cells have the desired format, continue with the script
