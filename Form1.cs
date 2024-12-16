@@ -1,20 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ClosedXML.Excel;
 using System.Diagnostics;
-using System.CodeDom;
-using static ExcelCombiner.Form1;
 
-//recources
-//https://stackoverflow.com/questions/10419071/using-c-sharp-to-read-write-excel-files-xls-xlsx
-//https://www.encodedna.com/windows-forms/read-an-excel-file-in-windows-forms-application-using-csharp-vbdotnet.htm
 
 namespace ExcelCombiner
 {
@@ -32,90 +23,109 @@ namespace ExcelCombiner
             public Button removeButton = new Button();
 
         }
+
         int maxFileCount = 4;
         List<UploadedFile> uploadedFiles = new List<UploadedFile>();
-        //Label uploadedFileLabel = new Label();
-        //string uploadedFilePath;
-        //Button removeUploadedFileButton = new Button();
+
         private void uploadButton_Click(object sender, EventArgs e)
         {
-            if (uploadedFiles.Count >= maxFileCount)
+            try
             {
-                errorUpload.SetError(uploadButton, "maximale Anzahl an Dateien erreicht");
-                return;
-            }
-            // Show the Open File dialog. If the user clicks OK, load the
-            // file that the user chose.
-            if (uploadFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                //saves the file path
-                string filePath = uploadFileDialog.FileName;
-
-                //check if the file is an excel file
-                if (!filePath.EndsWith(".xlsx"))
+                if (uploadedFiles.Count >= maxFileCount)
                 {
-                    //shows an error to the user and returns
-                    errorUpload.SetError(uploadButton, "unzulässiges Dateiformat");
-                    Debug.Print("unsupported file format");
+                    errorUpload.SetError(uploadButton, "maximale Anzahl an Dateien erreicht");
                     return;
                 }
-                //removes error message (if it exists)
-                errorUpload.Clear();
-
-                //create new workbook object
-                //var wbTemplate = new XLWorkbook();
-                //var ws = wbTemplate.AddWorksheet();
-
-                //ws.Cell("B3").Value = "Hallo Welt";
-
-                //overwrite the existing file
-                //wbTemplate.SaveAs(filePath);
-                //Debug.Print("selected file changed");
-
-                //creates a new uploaded file element
-                UploadedFile uploadedFile = new UploadedFile();
-
-                //save the path of the selected file
-                uploadedFile.filePath = filePath;
-
-                //create an textfield with the name of the file
-                uploadedFile.label.Name = "file01Label";
-                char[] seperator = "\\".ToCharArray();
-                string[] filePathSplitted = filePath.Split(seperator);
-                string FileName = filePathSplitted.Last();
-                uploadedFile.label.Text = FileName;
-                uploadedFile.fileName = FileName;
-
-                //define its size and dock it in the field right of the button
-                uploadedFile.label.Size = new Size(uploadedFile.label.PreferredWidth,
-                                                  uploadedFile.label.PreferredHeight);
-                uploadedFile.label.Parent = flowLayoutPanel2;
-
-                //create an button to remove the selected file
-                uploadedFile.removeButton.Name = "fileRemoveButton";
-                uploadedFile.removeButton.Size = uploadedFile.removeButton.PreferredSize;
-                uploadedFile.removeButton.Text = "Datei entfernen";
-                uploadedFile.removeButton.AutoSize = true;
-                uploadedFile.removeButton.Parent = flowLayoutPanel2;
-
-                //Adds an listener to the button which is called when the button is pressed
-                uploadedFile.removeButton.Click += new EventHandler(delegate (Object o, EventArgs a)
+                // Show the Open File dialog. If the user clicks OK, load the
+                // file that the user chose.
+                if (uploadFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    //remove the uploaded file
-                    uploadedFile.label.Dispose();
-                    uploadedFile.removeButton.Dispose();
-                    uploadedFiles.Remove(uploadedFile);
+                    //saves the file path
+                    string filePath = uploadFileDialog.FileName;
+
+                    //check if the file is an excel file
+                    if (!filePath.EndsWith(".xlsx"))
+                    {
+                        //shows an error to the user and returns
+                        errorUpload.SetError(uploadButton, "unzulässiges Dateiformat");
+                        Debug.Print("unsupported file format");
+                        return;
+                    }
+
+                    //check if the file contains the desired format
+                    var wb = new XLWorkbook(filePath);
+                    var ws = wb.Worksheet(1); //index starts at 1, not 0
+
+                    //check if the file has the desired format
+                    var cleanedWs = FileValidation.CheckFileFormat(ws);
+                    if (cleanedWs == null)
+                    {
+                        errorUpload.SetError(uploadButton, "ungültige Formatierung/Werte");
+                        return;
+                    }
+                    //ads now cleaned worksheet and remove the old one
+                    wb.AddWorksheet(cleanedWs);
+                    wb.Worksheet(1).Delete();
+                    wb.SaveAs("C:\\Users\\mt\\Documents\\TestFormCheck.xlsx");
+
                     //removes error message (if it exists)
                     errorUpload.Clear();
-                });
-                uploadedFiles.Add(uploadedFile);
 
+                    //creates a new uploaded file element
+                    UploadedFile uploadedFile = new UploadedFile();
+
+                    //save the path of the selected file
+                    uploadedFile.filePath = filePath;
+
+                    //create an textfield with the name of the file
+                    uploadedFile.label.Name = "file01Label";
+                    char[] seperator = "\\".ToCharArray();
+                    string[] filePathSplitted = filePath.Split(seperator);
+                    string FileName = filePathSplitted.Last();
+                    uploadedFile.label.Text = FileName;
+                    uploadedFile.fileName = FileName;
+
+                    //define its size and dock it in the field right of the button
+                    uploadedFile.label.Size = new Size(uploadedFile.label.PreferredWidth,
+                                                      uploadedFile.label.PreferredHeight);
+                    uploadedFile.label.Parent = flowLayoutPanel2;
+
+                    //create an button to remove the selected file
+                    uploadedFile.removeButton.Name = "fileRemoveButton";
+                    uploadedFile.removeButton.Size = uploadedFile.removeButton.PreferredSize;
+                    uploadedFile.removeButton.Text = "Datei entfernen";
+                    uploadedFile.removeButton.AutoSize = true;
+                    uploadedFile.removeButton.Parent = flowLayoutPanel2;
+
+                    //Adds an listener to the button which is called when the button is pressed
+                    uploadedFile.removeButton.Click += new EventHandler(delegate (Object o, EventArgs a)
+                    {
+                        //remove the uploaded file
+                        uploadedFile.label.Dispose();
+                        uploadedFile.removeButton.Dispose();
+                        uploadedFiles.Remove(uploadedFile);
+                        //removes error message (if it exists)
+                        errorUpload.Clear();
+                    });
+                    uploadedFiles.Add(uploadedFile);
+
+                }
+                else
+                {
+                    errorUpload.SetError(uploadButton, "upload fehlgeschlagen");
+                }
             }
-            else
+            catch (Exception error)
             {
-                errorUpload.SetError(uploadButton, "upload fehlgeschlagen");
+                Debug.Print(error.Message);
+                Debug.Print(error.StackTrace);
+
+                string errorMessage = error.Message + " " + error.StackTrace;
+                errorUpload.SetError(uploadButton, "unbekannter Fehler beim Upload: " + errorMessage);
             }
         }
+
+        
 
         private void createSampleButton_Click(object sender, EventArgs e)
         {
