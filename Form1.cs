@@ -22,11 +22,14 @@ namespace ExcelCombiner
             public string filePath;
             public string fileName;
             public Button removeButton = new Button();
+            public XLWorkbook workbook = new XLWorkbook();
 
         }
 
         int maxFileCount = 4;
         List<UploadedFile> uploadedFiles = new List<UploadedFile>();
+
+        XLWorkbook combined_wb = new XLWorkbook();
 
         private void uploadButton_Click(object sender, EventArgs e)
         {
@@ -75,7 +78,8 @@ namespace ExcelCombiner
                     //ads now cleaned worksheet and remove the old one
                     wb.AddWorksheet(cleanedWs);
                     wb.Worksheet(1).Delete();
-                    wb.SaveAs("C:\\Users\\mt\\Documents\\TestFormCheck.xlsx");
+
+                    //wb.SaveAs("C:\\Users\\mt\\Documents\\TestFormCheck.xlsx");
 
                     //removes error message (if it exists)
                     errorUpload.Clear();
@@ -85,6 +89,9 @@ namespace ExcelCombiner
 
                     //save the path of the selected file
                     uploadedFile.filePath = filePath;
+
+                    //saves the cleaned up workbook
+                    uploadedFile.workbook = wb;
 
                     //create an textfield with the name of the file
                     uploadedFile.label.Name = "file01Label";
@@ -175,15 +182,42 @@ namespace ExcelCombiner
             //doesnt work at the moment, it only creates an new empty file
 
             //create an workbook for the new file
-            var combined_wb = new XLWorkbook();
-            var comb_ws = combined_wb.AddWorksheet();
+            //IXLWorksheet comb_ws = combined_wb.AddWorksheet("zusammengefügt",0);
+            IXLWorksheet comb_ws;
+            if (combined_wb.Worksheets.Count() == 0)
+            {
+                comb_ws = combined_wb.AddWorksheet();
+            } else
+            {
+                comb_ws = combined_wb.Worksheet(1);
+            }
+            int rowIndex = 1;
 
             foreach (var uploadedFile in uploadedFiles)
             {
                 //gets the first worksheet and add it to the combined worksheet
-                var wb = new XLWorkbook(uploadedFile.filePath);
-                var ws = wb.Worksheet(0);
-                ws.CopyTo(combined_wb);
+                var worksheet = uploadedFile.workbook.Worksheet(1);
+                var firstRow = worksheet.FirstRowUsed();
+                var lastRow = worksheet.LastRowUsed();
+                var currentRow = firstRow;
+      
+                while (true)
+                {
+                    var combRow = comb_ws.Row(rowIndex);
+                    combRow.Cell("A").Value = currentRow.Cell("A").Value;
+                    combRow.Cell("B").Value = currentRow.Cell("B").Value;
+                    combRow.Cell("C").Value = currentRow.Cell("C").Value;
+
+                    rowIndex++;
+
+                    if (currentRow == lastRow)
+                    {
+                        break;
+                    }
+
+                    currentRow = currentRow.RowBelow();
+                }
+
             }
             combined_wb.SaveAs("C:\\Users\\mt\\Documents\\Komb_SUSA.xlsx");
         }
