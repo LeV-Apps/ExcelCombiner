@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows.Forms;
 using ClosedXML.Excel;
 using System.Diagnostics;
+using static ExcelCombiner.Form1;
 
 
 namespace ExcelCombiner
@@ -34,6 +35,9 @@ namespace ExcelCombiner
                 if (uploadedFiles.Count >= maxFileCount)
                 {
                     errorUpload.SetError(uploadButton, "maximale Anzahl an Dateien erreicht");
+                    outputConsole.Text = "Die maximale anzahl der hochladbaren Dateien ist erreicht, " +
+                        "falls dennoch mehr Dateien bearbeitet werden müssen kann das Programm" +
+                        "auch mehrere male durchlaufen werden.";
                     return;
                 }
                 // Show the Open File dialog. If the user clicks OK, load the
@@ -48,6 +52,8 @@ namespace ExcelCombiner
                     {
                         //shows an error to the user and returns
                         errorUpload.SetError(uploadButton, "unzulässiges Dateiformat");
+                        outputConsole.Text = "Upload ist fehlgeschlagen, handelt es sich bei " +
+                            "der ausgesuchten Datei um eine Excel Datei ? (.xlsx)";
                         Debug.Print("unsupported file format");
                         return;
                     }
@@ -61,6 +67,9 @@ namespace ExcelCombiner
                     if (cleanedWs == null)
                     {
                         errorUpload.SetError(uploadButton, "ungültige Formatierung/Werte");
+                        outputConsole.Text = "Upload ist fehlgeschlagen, da die Datei ein " +
+                            "ungültiges Format hat. Siehe die Vorlage um zu sehen wie die Datei aufgebaut " +
+                            "sein soll.";
                         return;
                     }
                     //ads now cleaned worksheet and remove the old one
@@ -108,11 +117,14 @@ namespace ExcelCombiner
                         errorUpload.Clear();
                     });
                     uploadedFiles.Add(uploadedFile);
+                    outputConsole.Text = "Upload von : " +uploadedFile.fileName+ " war erfolgreich";
 
                 }
                 else
                 {
                     errorUpload.SetError(uploadButton, "upload fehlgeschlagen");
+                    outputConsole.Text = "Upload ist fehlgeschlagen, Problem war warscheinlich das " +
+                        "keine Datei ausgewählt wurde";
                 }
             }
             catch (Exception error)
@@ -122,6 +134,9 @@ namespace ExcelCombiner
 
                 string errorMessage = error.Message + " " + error.StackTrace;
                 errorUpload.SetError(uploadButton, "unbekannter Fehler beim Upload: " + errorMessage);
+                outputConsole.Text = "Beim Upload ist ein unbekannter Fehler aufgetreten, " +
+                    "Error Nachricht: " + error.Message + " Error ursprung:" +
+                    " " + error.StackTrace;
             }
         }
 
@@ -148,6 +163,8 @@ namespace ExcelCombiner
                 //creates a new one or overwrites an existing one
                 string sampleFilePath = folderPath + "\\SUSA_Vorlage.xlsx";
                 wbTemplate.SaveAs(sampleFilePath);
+                outputConsole.Text = "Vorlagen Datei wurde erfolgreich unter " +
+                    sampleFilePath + " erstellt";
                 Debug.Print("sample created");
             }
         }

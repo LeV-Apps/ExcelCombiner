@@ -33,19 +33,20 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.createSampleButton = new System.Windows.Forms.Button();
-            this.uploadButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this.errorUpload = new System.Windows.Forms.ErrorProvider(this.components);
-            this.selectFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
+            this.uploadButton = new System.Windows.Forms.Button();
+            this.startButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel4 = new System.Windows.Forms.FlowLayoutPanel();
             this.downloadButton = new System.Windows.Forms.Button();
-            this.startButton = new System.Windows.Forms.Button();
+            this.errorUpload = new System.Windows.Forms.ErrorProvider(this.components);
+            this.selectFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.outputConsole = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.errorUpload)).BeginInit();
             this.flowLayoutPanel3.SuspendLayout();
             this.flowLayoutPanel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorUpload)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -57,13 +58,15 @@
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel2, 1, 1);
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel3, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel4, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.outputConsole, 1, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowCount = 4;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(800, 450);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -88,17 +91,6 @@
             this.createSampleButton.UseVisualStyleBackColor = true;
             this.createSampleButton.Click += new System.EventHandler(this.createSampleButton_Click);
             // 
-            // uploadButton
-            // 
-            this.uploadButton.AutoSize = true;
-            this.uploadButton.Location = new System.Drawing.Point(3, 3);
-            this.uploadButton.Name = "uploadButton";
-            this.uploadButton.Size = new System.Drawing.Size(121, 23);
-            this.uploadButton.TabIndex = 0;
-            this.uploadButton.Text = "Excel Liste hochladen";
-            this.uploadButton.UseVisualStyleBackColor = true;
-            this.uploadButton.Click += new System.EventHandler(this.uploadButton_Click);
-            // 
             // flowLayoutPanel2
             // 
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -106,12 +98,6 @@
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.Size = new System.Drawing.Size(594, 174);
             this.flowLayoutPanel2.TabIndex = 1;
-            // 
-            // errorUpload
-            // 
-            this.errorUpload.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
-            this.errorUpload.ContainerControl = this;
-            this.errorUpload.DataSource = this.tableLayoutPanel1.ColumnStyles;
             // 
             // flowLayoutPanel3
             // 
@@ -123,13 +109,35 @@
             this.flowLayoutPanel3.Size = new System.Drawing.Size(194, 174);
             this.flowLayoutPanel3.TabIndex = 2;
             // 
+            // uploadButton
+            // 
+            this.uploadButton.AutoSize = true;
+            this.uploadButton.Location = new System.Drawing.Point(3, 3);
+            this.uploadButton.Name = "uploadButton";
+            this.uploadButton.Size = new System.Drawing.Size(121, 23);
+            this.uploadButton.TabIndex = 0;
+            this.uploadButton.Text = "Excel Liste hochladen";
+            this.uploadButton.UseVisualStyleBackColor = true;
+            this.uploadButton.Click += new System.EventHandler(this.uploadButton_Click);
+            // 
+            // startButton
+            // 
+            this.startButton.AutoSize = true;
+            this.startButton.Location = new System.Drawing.Point(3, 32);
+            this.startButton.Name = "startButton";
+            this.startButton.Size = new System.Drawing.Size(154, 23);
+            this.startButton.TabIndex = 1;
+            this.startButton.Text = "Excel Listen zusammenfügen";
+            this.startButton.UseVisualStyleBackColor = true;
+            this.startButton.Click += new System.EventHandler(this.startButton_Click);
+            // 
             // flowLayoutPanel4
             // 
             this.flowLayoutPanel4.Controls.Add(this.downloadButton);
             this.flowLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel4.Location = new System.Drawing.Point(3, 228);
             this.flowLayoutPanel4.Name = "flowLayoutPanel4";
-            this.flowLayoutPanel4.Size = new System.Drawing.Size(194, 219);
+            this.flowLayoutPanel4.Size = new System.Drawing.Size(194, 106);
             this.flowLayoutPanel4.TabIndex = 3;
             // 
             // downloadButton
@@ -143,16 +151,22 @@
             this.downloadButton.UseVisualStyleBackColor = true;
             this.downloadButton.Click += new System.EventHandler(this.downloadButton_Click);
             // 
-            // startButton
+            // errorUpload
             // 
-            this.startButton.AutoSize = true;
-            this.startButton.Location = new System.Drawing.Point(3, 32);
-            this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(154, 23);
-            this.startButton.TabIndex = 1;
-            this.startButton.Text = "Excel Listen zusammenfügen";
-            this.startButton.UseVisualStyleBackColor = true;
-            this.startButton.Click += new System.EventHandler(this.startButton_Click);
+            this.errorUpload.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
+            this.errorUpload.ContainerControl = this;
+            this.errorUpload.DataSource = this.tableLayoutPanel1.ColumnStyles;
+            // 
+            // outputConsole
+            // 
+            this.outputConsole.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.outputConsole.AutoSize = true;
+            this.outputConsole.Location = new System.Drawing.Point(203, 337);
+            this.outputConsole.Name = "outputConsole";
+            this.outputConsole.Size = new System.Drawing.Size(594, 113);
+            this.outputConsole.TabIndex = 4;
             // 
             // Form1
             // 
@@ -166,11 +180,11 @@
             this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.errorUpload)).EndInit();
             this.flowLayoutPanel3.ResumeLayout(false);
             this.flowLayoutPanel3.PerformLayout();
             this.flowLayoutPanel4.ResumeLayout(false);
             this.flowLayoutPanel4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.errorUpload)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -189,6 +203,7 @@
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel4;
         private System.Windows.Forms.Button downloadButton;
+        private System.Windows.Forms.Label outputConsole;
     }
 }
 
