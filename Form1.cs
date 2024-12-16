@@ -79,8 +79,6 @@ namespace ExcelCombiner
                     wb.AddWorksheet(cleanedWs);
                     wb.Worksheet(1).Delete();
 
-                    //wb.SaveAs("C:\\Users\\mt\\Documents\\TestFormCheck.xlsx");
-
                     //removes error message (if it exists)
                     errorUpload.Clear();
 
@@ -136,14 +134,7 @@ namespace ExcelCombiner
             }
             catch (Exception error)
             {
-                Debug.Print(error.Message);
-                Debug.Print(error.StackTrace);
-
-                string errorMessage = error.Message + " " + error.StackTrace;
-                errorUpload.SetError(uploadButton, "unbekannter Fehler beim Upload: " + errorMessage);
-                outputConsole.Text = "Beim Upload ist ein unbekannter Fehler aufgetreten, " +
-                    "Error Nachricht: " + error.Message + " Error ursprung:" +
-                    " " + error.StackTrace;
+                PrintError(error, errorUpload, "unbekannter Fehler beim Upload");
             }
         }
 
@@ -175,18 +166,14 @@ namespace ExcelCombiner
                     outputConsole.Text = "Vorlagen Datei wurde erfolgreich unter " +
                         sampleFilePath + " erstellt";
                     Debug.Print("sample created");
+                } else
+                {
+                    outputConsole.Text = "Donwload der Vorlage abgebrochen";
                 }
             }
             catch (Exception error)
             {
-                Debug.Print(error.Message);
-                Debug.Print(error.StackTrace);
-
-                string errorMessage = error.Message + " " + error.StackTrace;
-                errorUpload.SetError(uploadButton, "unbekannter Fehler bei der Vorlagenerstellung: " + errorMessage);
-                outputConsole.Text = "Beim der Erstellung der Vorlage ist ein unbekannter Fehler aufgetreten, " +
-                    "Error Nachricht: " + error.Message + " Error ursprung:" +
-                    " " + error.StackTrace;
+                PrintError(error, errorUpload, "unbekannter Fehler bei der Vorlagenerstellung");
             }
         }
 
@@ -194,56 +181,18 @@ namespace ExcelCombiner
         {
             try
             {
-                //starts combining the files
-                IXLWorksheet comb_ws;
-                if (combined_wb.Worksheets.Count() == 0)
-                {
-                    comb_ws = combined_wb.AddWorksheet();
-                }
-                else
-                {
-                    comb_ws = combined_wb.Worksheet(1);
-                }
-                int rowIndex = 1;
+                //puts the content of all files into one file
+                combined_wb = FileEditer.CombineFiles(combined_wb,uploadedFiles);
 
-                foreach (var uploadedFile in uploadedFiles)
-                {
-                    //gets the first worksheet and add it to the combined worksheet
-                    var worksheet = uploadedFile.workbook.Worksheet(1);
-                    var firstRow = worksheet.FirstRowUsed();
-                    var lastRow = worksheet.LastRowUsed();
-                    var currentRow = firstRow;
+                //sorts the newly created file
 
-                    while (true)
-                    {
-                        var combRow = comb_ws.Row(rowIndex);
-                        combRow.Cell("A").Value = currentRow.Cell("A").Value;
-                        combRow.Cell("B").Value = currentRow.Cell("B").Value;
-                        combRow.Cell("C").Value = currentRow.Cell("C").Value;
+                //adds duplicates if possible, if not possible marks them and tells the user
 
-                        rowIndex++;
-
-                        if (currentRow == lastRow)
-                        {
-                            break;
-                        }
-
-                        currentRow = currentRow.RowBelow();
-                    }
-
-                }
                 outputConsole.Text = "Dateien wurden erfolgreich zusammengefügt, können jetzt gedownloaded werden";
             }
             catch (Exception error)
             {
-                Debug.Print(error.Message);
-                Debug.Print(error.StackTrace);
-
-                string errorMessage = error.Message + " " + error.StackTrace;
-                errorUpload.SetError(uploadButton, "unbekannter Fehler beim Zusammenfügen: " + errorMessage);
-                outputConsole.Text = "Beim Zusammenfügen ist ein unbekannter Fehler aufgetreten, " +
-                    "Error Nachricht: " + error.Message + " Error ursprung:" +
-                    " " + error.StackTrace;
+                PrintError(error,null,"unbekannter fehler beim Zusammenfügen");
             }
         }
 
@@ -265,15 +214,22 @@ namespace ExcelCombiner
             }
             catch (Exception error)
             {
-                Debug.Print(error.Message);
-                Debug.Print(error.StackTrace);
-
-                string errorMessage = error.Message + " " + error.StackTrace;
-                errorUpload.SetError(uploadButton, "unbekannter Fehler beim download: " + errorMessage);
-                outputConsole.Text = "Beim download ist ein unbekannter Fehler aufgetreten, " +
-                    "Error Nachricht: " + error.Message + " Error ursprung:" +
-                    " " + error.StackTrace;
+                PrintError(error, errorUpload, "unbekannter Fehler beim download");
             }
+        }
+        private void PrintError(Exception error,ErrorProvider errorProvider, string consoleMessage)
+        {
+            Debug.Print(error.Message);
+            Debug.Print(error.StackTrace);
+
+            string errorMessage = error.Message + " " + error.StackTrace;
+            if (errorProvider != null)
+            {
+                errorProvider.SetError(uploadButton, combined_wb + " " + errorMessage);
+            }
+            outputConsole.Text = consoleMessage + " " +
+                "Error Nachricht: " + error.Message + " Error ursprung:" +
+                " " + error.StackTrace;
         }
     }
 }
