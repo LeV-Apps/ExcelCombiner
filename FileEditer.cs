@@ -23,15 +23,10 @@ namespace ExcelCombiner
         {
             //starts combining the files
             IXLWorksheet comb_ws;
-            if (workbook == null)
-            {
-                workbook = new XLWorkbook();
-                comb_ws = workbook.AddWorksheet();
-            }
-            else
-            {
-                comb_ws = workbook.Worksheet(1);
-            }
+
+            workbook = new XLWorkbook();
+            comb_ws = workbook.AddWorksheet();
+
             int rowIndex = 1;
 
             foreach (var uploadedFile in uploadedFiles)
@@ -68,6 +63,10 @@ namespace ExcelCombiner
         /// <returns></returns>
         public static XLWorkbook CombineDuplicates(XLWorkbook workbook,Label outputTextBox)
         {
+            //default message if everything works flawless, is overwritten if thats not the case
+            outputTextBox.Text = "Alle Zeilen konnten erfolgreich zusammengefügt werden, die " +
+                "Datei kann nun gedownloaded werden.";
+
             var worksheet = workbook.Worksheet(1);
 
             var firstRow = worksheet.FirstRowUsed();
@@ -79,10 +78,6 @@ namespace ExcelCombiner
 
             while (true)
             {
-                //default message if everything works flawless, is overwritten if thats not the case
-                outputTextBox.Text = "Alle Zeilen konnten erfolgreich zusammengefügt werden, die " +
-                    "Datei kann nun gedownloaded werden.";
-
                 //compare the current row and the row to compare, there are 3 possible scenarios
                 //1. they both have the same number and discription -> add them together
                 //2. they have destinct numbers and descriptions -> dont modify them
@@ -148,7 +143,7 @@ namespace ExcelCombiner
                     //tell user, overwrites the default message
                     outputTextBox.Text = "Manche Zeilen konnten nicht zusammengefügt werden, da dort lediglich die " +
                         "Kontonummer ODER lediglich der Kontennahme übereinstimmen. Diese müssen manuell bearbeitet werden, " +
-                        "die jeweiligen Zeilen wurden rott markiert. Die Datei kann nun gedownloaded werden";
+                        "die jeweiligen Zeilen wurden rot markiert. Die Datei kann nun gedownloaded werden";
                     //go on with the script
                     if (rowToCompare != lastRow)
                     {

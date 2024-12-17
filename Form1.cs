@@ -26,7 +26,8 @@ namespace ExcelCombiner
 
         }
 
-        int maxFileCount = 4;
+        int maxFileCount = 8;
+        int maxFilenameDisplayLength = 50;
         List<UploadedFile> uploadedFiles = new List<UploadedFile>();
 
         XLWorkbook combined_wb = null;
@@ -40,7 +41,7 @@ namespace ExcelCombiner
                     errorField.Clear();
                     errorField.SetError(uploadButton, "maximale Anzahl an Dateien erreicht");
                     outputConsole.Text = "Die maximale anzahl der hochladbaren Dateien ist erreicht, " +
-                        "falls dennoch mehr Dateien bearbeitet werden müssen kann das Programm" +
+                        "falls dennoch mehr Dateien bearbeitet werden müssen kann das Programm " +
                         "auch mehrere male durchlaufen werden.";
                     return;
                 }
@@ -98,14 +99,21 @@ namespace ExcelCombiner
                     uploadedFile.label.Name = "file01Label";
                     char[] seperator = "\\".ToCharArray();
                     string[] filePathSplitted = filePath.Split(seperator);
-                    string FileName = filePathSplitted.Last();
-                    uploadedFile.label.Text = FileName;
-                    uploadedFile.fileName = FileName;
+                    string fileName = filePathSplitted.Last();
+                    if (fileName.Length > maxFilenameDisplayLength)
+                    {
+                        uploadedFile.label.Text = fileName.Substring(0, maxFilenameDisplayLength);
+                    } else
+                    {
+                        uploadedFile.label.Text = fileName;
+                    }
+                    uploadedFile.fileName = fileName;
 
                     //define its size and dock it in the field right of the button
                     uploadedFile.label.Size = new Size(uploadedFile.label.PreferredWidth,
                                                       uploadedFile.label.PreferredHeight);
                     uploadedFile.label.Parent = flowLayoutPanel2;
+                    uploadedFile.label.TextAlign = ContentAlignment.MiddleCenter;
 
                     //create an button to remove the selected file
                     uploadedFile.removeButton.Name = "fileRemoveButton";
@@ -123,6 +131,7 @@ namespace ExcelCombiner
                         uploadedFiles.Remove(uploadedFile);
                         //removes error message (if it exists)
                         errorField.Clear();
+                        outputConsole.Text = "Datei : " +uploadedFile.fileName +" wurde entfernt";
                     });
                     uploadedFiles.Add(uploadedFile);
                     outputConsole.Text = "Upload von : " +uploadedFile.fileName+ " war erfolgreich";

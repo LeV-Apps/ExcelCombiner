@@ -42,11 +42,12 @@
             this.outputConsole = new System.Windows.Forms.Label();
             this.errorField = new System.Windows.Forms.ErrorProvider(this.components);
             this.selectFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.flowLayoutPanel5 = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel3.SuspendLayout();
-            this.flowLayoutPanel4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorField)).BeginInit();
+            this.flowLayoutPanel5.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -59,14 +60,15 @@
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel3, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel4, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.outputConsole, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel5, 0, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 4;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 0F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(800, 450);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -96,17 +98,16 @@
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel2.Location = new System.Drawing.Point(203, 48);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(594, 174);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(594, 219);
             this.flowLayoutPanel2.TabIndex = 1;
             // 
             // flowLayoutPanel3
             // 
             this.flowLayoutPanel3.Controls.Add(this.uploadButton);
-            this.flowLayoutPanel3.Controls.Add(this.startButton);
             this.flowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel3.Location = new System.Drawing.Point(3, 48);
             this.flowLayoutPanel3.Name = "flowLayoutPanel3";
-            this.flowLayoutPanel3.Size = new System.Drawing.Size(194, 174);
+            this.flowLayoutPanel3.Size = new System.Drawing.Size(194, 219);
             this.flowLayoutPanel3.TabIndex = 2;
             // 
             // uploadButton
@@ -123,7 +124,7 @@
             // startButton
             // 
             this.startButton.AutoSize = true;
-            this.startButton.Location = new System.Drawing.Point(3, 32);
+            this.startButton.Location = new System.Drawing.Point(3, 3);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(154, 23);
             this.startButton.TabIndex = 1;
@@ -133,17 +134,16 @@
             // 
             // flowLayoutPanel4
             // 
-            this.flowLayoutPanel4.Controls.Add(this.downloadButton);
             this.flowLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel4.Location = new System.Drawing.Point(3, 228);
+            this.flowLayoutPanel4.Location = new System.Drawing.Point(3, 273);
             this.flowLayoutPanel4.Name = "flowLayoutPanel4";
-            this.flowLayoutPanel4.Size = new System.Drawing.Size(194, 106);
+            this.flowLayoutPanel4.Size = new System.Drawing.Size(194, 1);
             this.flowLayoutPanel4.TabIndex = 3;
             // 
             // downloadButton
             // 
             this.downloadButton.AutoSize = true;
-            this.downloadButton.Location = new System.Drawing.Point(3, 3);
+            this.downloadButton.Location = new System.Drawing.Point(3, 32);
             this.downloadButton.Name = "downloadButton";
             this.downloadButton.Size = new System.Drawing.Size(124, 23);
             this.downloadButton.TabIndex = 0;
@@ -157,9 +157,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.outputConsole.AutoSize = true;
-            this.outputConsole.Location = new System.Drawing.Point(203, 337);
+            this.outputConsole.Location = new System.Drawing.Point(203, 270);
             this.outputConsole.Name = "outputConsole";
-            this.outputConsole.Size = new System.Drawing.Size(594, 113);
+            this.outputConsole.Size = new System.Drawing.Size(594, 180);
             this.outputConsole.TabIndex = 4;
             // 
             // errorField
@@ -167,6 +167,16 @@
             this.errorField.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
             this.errorField.ContainerControl = this;
             this.errorField.DataSource = this.tableLayoutPanel1.ColumnStyles;
+            // 
+            // flowLayoutPanel5
+            // 
+            this.flowLayoutPanel5.Controls.Add(this.startButton);
+            this.flowLayoutPanel5.Controls.Add(this.downloadButton);
+            this.flowLayoutPanel5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel5.Location = new System.Drawing.Point(3, 273);
+            this.flowLayoutPanel5.Name = "flowLayoutPanel5";
+            this.flowLayoutPanel5.Size = new System.Drawing.Size(194, 174);
+            this.flowLayoutPanel5.TabIndex = 5;
             // 
             // Form1
             // 
@@ -182,9 +192,9 @@
             this.flowLayoutPanel1.PerformLayout();
             this.flowLayoutPanel3.ResumeLayout(false);
             this.flowLayoutPanel3.PerformLayout();
-            this.flowLayoutPanel4.ResumeLayout(false);
-            this.flowLayoutPanel4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.errorField)).EndInit();
+            this.flowLayoutPanel5.ResumeLayout(false);
+            this.flowLayoutPanel5.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -204,6 +214,7 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel4;
         private System.Windows.Forms.Button downloadButton;
         private System.Windows.Forms.Label outputConsole;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel5;
     }
 }
 
