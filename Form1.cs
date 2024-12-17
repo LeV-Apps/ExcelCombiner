@@ -29,7 +29,7 @@ namespace ExcelCombiner
         int maxFileCount = 4;
         List<UploadedFile> uploadedFiles = new List<UploadedFile>();
 
-        XLWorkbook combined_wb = new XLWorkbook();
+        XLWorkbook combined_wb = null;
 
         private void uploadButton_Click(object sender, EventArgs e)
         {
@@ -37,7 +37,8 @@ namespace ExcelCombiner
             {
                 if (uploadedFiles.Count >= maxFileCount)
                 {
-                    errorUpload.SetError(uploadButton, "maximale Anzahl an Dateien erreicht");
+                    errorField.Clear();
+                    errorField.SetError(uploadButton, "maximale Anzahl an Dateien erreicht");
                     outputConsole.Text = "Die maximale anzahl der hochladbaren Dateien ist erreicht, " +
                         "falls dennoch mehr Dateien bearbeitet werden müssen kann das Programm" +
                         "auch mehrere male durchlaufen werden.";
@@ -54,7 +55,8 @@ namespace ExcelCombiner
                     if (!filePath.EndsWith(".xlsx"))
                     {
                         //shows an error to the user and returns
-                        errorUpload.SetError(uploadButton, "unzulässiges Dateiformat");
+                        errorField.Clear();
+                        errorField.SetError(uploadButton, "unzulässiges Dateiformat");
                         outputConsole.Text = "Upload ist fehlgeschlagen, handelt es sich bei " +
                             "der ausgesuchten Datei um eine Excel Datei ? (.xlsx)";
                         Debug.Print("unsupported file format");
@@ -69,7 +71,8 @@ namespace ExcelCombiner
                     var cleanedWs = FileValidation.CheckFileFormat(ws);
                     if (cleanedWs == null)
                     {
-                        errorUpload.SetError(uploadButton, "ungültige Formatierung/Werte");
+                        errorField.Clear();
+                        errorField.SetError(uploadButton, "ungültige Formatierung/Werte");
                         outputConsole.Text = "Upload ist fehlgeschlagen, da die Datei ein " +
                             "ungültiges Format hat. Siehe die Vorlage um zu sehen wie die Datei aufgebaut " +
                             "sein soll.";
@@ -80,7 +83,7 @@ namespace ExcelCombiner
                     wb.Worksheet(1).Delete();
 
                     //removes error message (if it exists)
-                    errorUpload.Clear();
+                    errorField.Clear();
 
                     //creates a new uploaded file element
                     UploadedFile uploadedFile = new UploadedFile();
@@ -119,7 +122,7 @@ namespace ExcelCombiner
                         uploadedFile.removeButton.Dispose();
                         uploadedFiles.Remove(uploadedFile);
                         //removes error message (if it exists)
-                        errorUpload.Clear();
+                        errorField.Clear();
                     });
                     uploadedFiles.Add(uploadedFile);
                     outputConsole.Text = "Upload von : " +uploadedFile.fileName+ " war erfolgreich";
@@ -127,14 +130,15 @@ namespace ExcelCombiner
                 }
                 else
                 {
-                    errorUpload.SetError(uploadButton, "upload fehlgeschlagen");
+                    errorField.Clear();
+                    errorField.SetError(uploadButton, "upload fehlgeschlagen");
                     outputConsole.Text = "Upload ist fehlgeschlagen, Problem war warscheinlich das " +
                         "keine Datei ausgewählt wurde";
                 }
             }
             catch (Exception error)
             {
-                PrintError(error, errorUpload, "unbekannter Fehler beim Upload");
+                PrintError(error, errorField, "unbekannter Fehler beim Upload");
             }
         }
 
@@ -147,6 +151,8 @@ namespace ExcelCombiner
                 //let the user select the folder to save the sample to
                 if (selectFolderDialog.ShowDialog() == DialogResult.OK)
                 {
+                    errorField.Clear();
+
                     //save the folder path
                     string folderPath = selectFolderDialog.SelectedPath;
                     Debug.Print(folderPath);
@@ -168,12 +174,16 @@ namespace ExcelCombiner
                     Debug.Print("sample created");
                 } else
                 {
-                    outputConsole.Text = "Donwload der Vorlage abgebrochen";
+                    errorField.Clear();
+                    errorField.SetError(createSampleButton, "kein Speicherort ausgewählt");
+                    outputConsole.Text = "Donwload der Vorlage abgebrochen, es wurde " +
+                        "kein Speicherort ausgewählt";
+
                 }
             }
             catch (Exception error)
             {
-                PrintError(error, errorUpload, "unbekannter Fehler bei der Vorlagenerstellung");
+                PrintError(error, errorField, "unbekannter Fehler bei der Vorlagenerstellung");
             }
         }
 
@@ -181,14 +191,27 @@ namespace ExcelCombiner
         {
             try
             {
+                if (uploadedFiles.Count < 1)
+                {
+                    errorField.Clear();
+                    errorField.SetError(startButton, "es sind noch keine Dateien hochgeladen");
+                    outputConsole.Text = "Programm kann noch nicht ausgeführt werden, da noch " +
+                        "keine Datein hochgeladen wurden";
+                    return;
+                }
+                errorField.Clear();
+
                 //puts the content of all files into one file
                 combined_wb = FileEditer.CombineFiles(combined_wb,uploadedFiles);
 
                 //sorts the newly created file
+                var sorted_wb = combined_wb;
+                var ws = sorted_wb.Worksheet(1);
+                var sorted_ws = ws.Sort(1);
+                combined_wb = sorted_wb;
 
-                //adds duplicates if possible, if not possible marks them and tells the user
-
-                outputConsole.Text = "Dateien wurden erfolgreich zusammengefügt, können jetzt gedownloaded werden";
+                //now combine the duplicates, if not possible marks them and tells the user
+                combined_wb = FileEditer.CombineDuplicates(combined_wb,outputConsole);
             }
             catch (Exception error)
             {
@@ -200,6 +223,17 @@ namespace ExcelCombiner
         {
             try
             {
+                //check if there already an file to download
+                if (combined_wb == null)
+                {
+                    errorField.Clear();
+                    errorField.SetError(downloadButton, "es gibt noch keine Datei zum download");
+                    outputConsole.Text = "Download ist fehlgeschlagen, da noch keine Datei zum " +
+                        "Download bereit steht. Wurde das Programm überhaupt schon ausgeführt ?";
+                    return;
+                }
+                errorField.Clear();
+
                 //let the user select the folder to save the file to
                 if (selectFolderDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -214,11 +248,13 @@ namespace ExcelCombiner
             }
             catch (Exception error)
             {
-                PrintError(error, errorUpload, "unbekannter Fehler beim download");
+                PrintError(error, errorField, "unbekannter Fehler beim download");
             }
         }
         private void PrintError(Exception error,ErrorProvider errorProvider, string consoleMessage)
         {
+            errorProvider.Clear();
+
             Debug.Print(error.Message);
             Debug.Print(error.StackTrace);
 

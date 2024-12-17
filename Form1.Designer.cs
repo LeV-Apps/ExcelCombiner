@@ -39,14 +39,14 @@
             this.startButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel4 = new System.Windows.Forms.FlowLayoutPanel();
             this.downloadButton = new System.Windows.Forms.Button();
-            this.errorUpload = new System.Windows.Forms.ErrorProvider(this.components);
-            this.selectFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.outputConsole = new System.Windows.Forms.Label();
+            this.errorField = new System.Windows.Forms.ErrorProvider(this.components);
+            this.selectFolderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel3.SuspendLayout();
             this.flowLayoutPanel4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.errorUpload)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorField)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -151,12 +151,6 @@
             this.downloadButton.UseVisualStyleBackColor = true;
             this.downloadButton.Click += new System.EventHandler(this.downloadButton_Click);
             // 
-            // errorUpload
-            // 
-            this.errorUpload.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
-            this.errorUpload.ContainerControl = this;
-            this.errorUpload.DataSource = this.tableLayoutPanel1.ColumnStyles;
-            // 
             // outputConsole
             // 
             this.outputConsole.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -167,6 +161,12 @@
             this.outputConsole.Name = "outputConsole";
             this.outputConsole.Size = new System.Drawing.Size(594, 113);
             this.outputConsole.TabIndex = 4;
+            // 
+            // errorField
+            // 
+            this.errorField.BlinkStyle = System.Windows.Forms.ErrorBlinkStyle.NeverBlink;
+            this.errorField.ContainerControl = this;
+            this.errorField.DataSource = this.tableLayoutPanel1.ColumnStyles;
             // 
             // Form1
             // 
@@ -184,7 +184,7 @@
             this.flowLayoutPanel3.PerformLayout();
             this.flowLayoutPanel4.ResumeLayout(false);
             this.flowLayoutPanel4.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.errorUpload)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.errorField)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -196,7 +196,7 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button uploadButton;
         private System.Windows.Forms.Button createSampleButton;
-        private System.Windows.Forms.ErrorProvider errorUpload;
+        private System.Windows.Forms.ErrorProvider errorField;
         private System.Windows.Forms.FolderBrowserDialog selectFolderDialog;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
